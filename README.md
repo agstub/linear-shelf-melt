@@ -14,3 +14,4 @@ The code dependencies are listed in requirements.txt.
 Examples for running the code are provided in the Jupyter notebooks ("notebooks" directory).
 
 The Jupyter notebooks can be run with Binder here: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/agstub/linear-shelf-melt/HEAD?labpath=%2Fnotebooks%2F1_math.ipynb)
+(Note: to run the second notebook in Binder, make sure the other notebooks are not running. Otherwise the notebook will run out of memory)
