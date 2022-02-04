@@ -7,6 +7,8 @@
 
 #---------------------- 1. ELEVATION SOLUTIONS----------------------------------
 import sympy as sp
+import matplotlib.pyplot as plt
+
 nu = sp.Symbol('n')
 mu = sp.exp(nu)
 # use this matrix for floating ice:
