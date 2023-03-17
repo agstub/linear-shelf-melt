@@ -30,25 +30,25 @@ def B(k):
     B1 =  (1/n)*( 2*(n+1)*np.exp(3*n) + 2*(n-1)*np.exp(n))
     D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
     f0 = D/B1
-    f = 1/(eps_shelf+f0)
+    f =1/(eps_shelf+f0)
     return f
 
-def Lamda_p(k,kx,u0):
+def Lamda_p(k,kx,alpha):
     # expression for the larger eigenvalue in the problem
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = -0.5*(delta+1)*R_+0.5*mu-1j*(2*np.pi*kx)*u0
+    Lp = -0.5*(delta+1)*R_+0.5*mu-1j*(2*np.pi*kx)*alpha
     return Lp
 
-def Lamda_m(k,kx,u0):
+def Lamda_m(k,kx,alpha):
     # expression for the smaller eigenvalue in the problem
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lm = -1j*(2*np.pi*kx)*u0-0.5*(delta+1)*R_-0.5*mu
+    Lm = -1j*(2*np.pi*kx)*alpha-0.5*(delta+1)*R_-0.5*mu
     return Lm
 
 def Uh(k,z):
@@ -74,45 +74,49 @@ def Wh(k,z):
     # vertical velocity reponse function that multiplies the upper surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
     n = 2*np.pi*k
-    R = (n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + n*np.exp(2*n) + n + (-n*z*(2*n + np.exp(2*n) - 1) + n*np.exp(2*n) + n + np.exp(2*n) - 1)*np.exp(2*n*z) + np.exp(2*n) - 1)*np.exp(-n*(z - 1))
+    R = (-1/n)*(n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + n*np.exp(2*n) + n + (-n*z*(2*n + np.exp(2*n) - 1) + n*np.exp(2*n) + n + np.exp(2*n) - 1)*np.exp(2*n*z) + np.exp(2*n) - 1)*np.exp(-n*(z - 1))
     D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
-    return -(1/n)*R/D
+    # f0 = D/R
+    f = R/D#1/(eps_shelf+f0)
+    return f
 
 def Ws(k,z):
     # vertical velocity reponse function that multiplies the lower surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
     n = 2*np.pi*k
-    R = ((-2*n**2 + n*z*(2*n + np.exp(2*n) - 1) + 2*n + np.exp(2*n) - 1)*np.exp(2*n) + (2*n**2*np.exp(2*n) - n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + 2*n*np.exp(2*n) + np.exp(2*n) - 1)*np.exp(2*n*z))*np.exp(-n*z)
+    R = -(1/n)*((-2*n**2 + n*z*(2*n + np.exp(2*n) - 1) + 2*n + np.exp(2*n) - 1)*np.exp(2*n) + (2*n**2*np.exp(2*n) - n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + 2*n*np.exp(2*n) + np.exp(2*n) - 1)*np.exp(2*n*z))*np.exp(-n*z)
     D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
-    return -(1/n)*R/D
+    f0 = D/R
+    f = R/D#1/(eps_shelf+f0)
+    return f
 
 #------------------------------ Kernels-----------------------------------------
-def ker_h(t,k,kx,u0):
+def ker_h(t,k,kx,alpha):
     # kernel for computing the upper surface elevation when the melt-rate forcing
     # is time-dependent
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = Lamda_p(k,kx,u0)
-    Lm = Lamda_m(k,kx,u0)
+    Lp = Lamda_p(k,kx,alpha)
+    Lm = Lamda_m(k,kx,alpha)
 
     ker0 = (delta*B_/mu)*np.exp(Lp*t)
     ker1 = (delta*B_/mu)*np.exp(Lm*t)
     K = ker1-ker0
-    return K*ind(k,1e-4)
+    return K
 
-def ker_s(t,k,kx,u0):
+def ker_s(t,k,kx,alpha):
     # kernel for computing the lower surface elevation when the melt-rate forcing
     # is time-dependent
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = Lamda_p(k,kx,u0)
-    Lm = Lamda_m(k,kx,u0)
+    Lp = Lamda_p(k,kx,alpha)
+    Lm = Lamda_m(k,kx,alpha)
 
     ker0 = (1/(2*mu))*(mu-chi)*np.exp(Lm*t)
     ker1 = (1/(2*mu))*(mu+chi)*np.exp(Lp*t)
     K = ker0+ker1
-    return K*ind(k,1e-4)
+    return K

@@ -29,7 +29,7 @@ eps_shelf = 2.529e-14       # regularization corresponding to the relaxation("R"
 # discretization parameters
 Nx = 101                    # number of grid points in x-direction
 Ny = 101                    # number of grid points in y-direction
-Nt = 200                    # number of time steps
+Nt = 100                    # number of time steps
 
 t_final = 100               # final time (in multiples of t_r)
 
@@ -47,10 +47,10 @@ dy = np.abs(y0[1]-y0[0])       # grid size in y direction
 kx0 =  fftfreq(Nx,dx)
 ky0 =  fftfreq(Ny,dy)
 
-# set zero frequency to small number because the integral kernels
+# set zero frequency to small number because some functions in the integral kernels
 # have singularities at the zero frequency
-kx0[0] = 1e-11
-ky0[0] = 1e-11
+kx0[0] = 1e-10
+ky0[0] = 1e-10
 
 # mesh grids for physical space domain
 t,x,y = np.meshgrid(t0,x0,y0,indexing='ij')
