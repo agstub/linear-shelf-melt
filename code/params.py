@@ -27,17 +27,17 @@ eps_shelf = 2.529e-14       # regularization corresponding to the relaxation("R"
 
 #---------------------- numerical parameters------------------------------------
 # discretization parameters
-Nx = 101                    # number of grid points in x-direction
-Ny = 101                    # number of grid points in y-direction
-Nt = 100                    # number of time steps
+Nx = 201                    # number of grid points in x-direction
+Ny = 201                    # number of grid points in y-direction
+Nt = 200                    # number of time steps
 
-t_final = 100               # final time (in multiples of t_r)
+t_final = 200               # final time (in multiples of t_r)
 
 t0 = np.linspace(0,t_final,num=Nt) # time array
 
 dt = t0[1]
 
-L = 40                         # horizontal x-y domain is a square of length 2L (default L=40)
+L = 50                         # horizontal x-y domain is a square of length 2L (default L=40)
 x0 = np.linspace(-L,L,num=Nx)  # x coordinate array
 y0 = np.linspace(-L,L,num=Ny)  # y coordinate array
 dx = np.abs(x0[1]-x0[0])       # grid size in x direction'
@@ -49,8 +49,8 @@ ky0 =  fftfreq(Ny,dy)
 
 # set zero frequency to small number because some functions in the integral kernels
 # have singularities at the zero frequency
-kx0[0] = 1e-10
-ky0[0] = 1e-10
+kx0[0] = 1e-15
+ky0[0] = 1e-15
 
 # mesh grids for physical space domain
 t,x,y = np.meshgrid(t0,x0,y0,indexing='ij')

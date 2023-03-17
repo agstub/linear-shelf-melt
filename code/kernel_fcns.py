@@ -18,8 +18,8 @@ def ind(k,k_min):
 def R(k):
     # relaxation function for floating ice
     n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
-    R1 =  (1/n)*(np.exp(4*n) + (4*n)*np.exp(2*n) - 1 )
-    D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
+    R1 =  np.exp(4*n) + (4*n)*np.exp(2*n) - 1 
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     f0 = D/R1
     f = 1/(eps_shelf+f0)
     return f
@@ -27,8 +27,8 @@ def R(k):
 def B(k):
     # buoyancy transfer function for floating ice
     n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
-    B1 =  (1/n)*( 2*(n+1)*np.exp(3*n) + 2*(n-1)*np.exp(n))
-    D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
+    B1 =  2*(n+1)*np.exp(3*n) + 2*(n-1)*np.exp(n)
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     f0 = D/B1
     f =1/(eps_shelf+f0)
     return f
