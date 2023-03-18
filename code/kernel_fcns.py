@@ -2,7 +2,7 @@
 # the elevation and velocity solutions
 
 import numpy as np
-from params import Nt,eps_shelf,delta,dt
+from params import Nt,eps,delta,dt
 from scipy.signal import fftconvolve
 
 #---------------------------convolution operator--------------------------------
@@ -21,7 +21,7 @@ def R(k):
     R1 =  np.exp(4*n) + (4*n)*np.exp(2*n) - 1 
     D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     f0 = D/R1
-    f = 1/(eps_shelf+f0)
+    f = 1/(eps+f0)
     return f
 
 def B(k):
@@ -30,7 +30,7 @@ def B(k):
     B1 =  2*(n+1)*np.exp(3*n) + 2*(n-1)*np.exp(n)
     D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     f0 = D/B1
-    f =1/(eps_shelf+f0)
+    f =1/(eps+f0)
     return f
 
 def Lamda_p(k,kx,alpha):
@@ -57,7 +57,8 @@ def Uh(k,z):
     n = 2*np.pi*k
     R = z*(2*n*(np.exp(2*n) +np.exp(2*n*z)))-(1-z)*(np.exp(2*n*(z+1)) +np.exp(2*n)-np.exp(2*n*z)-1)
     D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
-    f = np.exp(n)*R/D
+    f0 = D/(np.exp(n)*R)
+    f = 1/(1e-5*eps+f0)
     return f
 
 def Us(k,z):
@@ -66,7 +67,8 @@ def Us(k,z):
     n = 2*np.pi*k
     R = z*(np.exp(4*n)+np.exp(2*n*(z+1)) -np.exp(2*n)-np.exp(2*n*z))-(1-z)*2*n*np.exp(2*n)*(np.exp(2*n*z)+1)
     D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
-    f = R/D
+    f0 = D/R
+    f = 1/(1e-5*eps+f0)
     return f
 
 
@@ -74,20 +76,20 @@ def Wh(k,z):
     # vertical velocity reponse function that multiplies the upper surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
     n = 2*np.pi*k
-    R = (-1/n)*(n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + n*np.exp(2*n) + n + (-n*z*(2*n + np.exp(2*n) - 1) + n*np.exp(2*n) + n + np.exp(2*n) - 1)*np.exp(2*n*z) + np.exp(2*n) - 1)*np.exp(-n*(z - 1))
-    D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
-    # f0 = D/R
-    f = R/D#1/(eps_shelf+f0)
+    R = -(n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + n*np.exp(2*n) + n + (-n*z*(2*n + np.exp(2*n) - 1) + n*np.exp(2*n) + n + np.exp(2*n) - 1)*np.exp(2*n*z) + np.exp(2*n) - 1)*np.exp(-n*(z - 1))
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
+    f0 = D/R
+    f = 1/(eps+f0)
     return f
 
 def Ws(k,z):
     # vertical velocity reponse function that multiplies the lower surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
     n = 2*np.pi*k
-    R = -(1/n)*((-2*n**2 + n*z*(2*n + np.exp(2*n) - 1) + 2*n + np.exp(2*n) - 1)*np.exp(2*n) + (2*n**2*np.exp(2*n) - n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + 2*n*np.exp(2*n) + np.exp(2*n) - 1)*np.exp(2*n*z))*np.exp(-n*z)
-    D = np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1
+    R = -((-2*n**2 + n*z*(2*n + np.exp(2*n) - 1) + 2*n + np.exp(2*n) - 1)*np.exp(2*n) + (2*n**2*np.exp(2*n) - n*z*(2*n*np.exp(2*n) + np.exp(2*n) - 1) + 2*n*np.exp(2*n) + np.exp(2*n) - 1)*np.exp(2*n*z))*np.exp(-n*z)
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     f0 = D/R
-    f = R/D#1/(eps_shelf+f0)
+    f = 1/(eps+f0)
     return f
 
 #------------------------------ Kernels-----------------------------------------

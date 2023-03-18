@@ -14,7 +14,7 @@ g = 9.81                    # gravitational acceleration
 delta = rho_w/rho_i-1       # flotation factor
 t_r = 2*eta/(rho_i*g*H)     # viscous relaxation time
 
-eps_shelf = 2.529e-14       # regularization corresponding to the relaxation("R") and buoyancy ("B")
+eps = 2.529e-14             # regularization corresponding to the relaxation("R") and buoyancy ("B")
                             # response time in the long-wavelength limit k-->0.
                             #
                             # ^Notes: this is chosen to be this value
@@ -27,8 +27,8 @@ eps_shelf = 2.529e-14       # regularization corresponding to the relaxation("R"
 
 #---------------------- numerical parameters------------------------------------
 # discretization parameters
-Nx = 201                    # number of grid points in x-direction
-Ny = 201                    # number of grid points in y-direction
+Nx = 101                    # number of grid points in x-direction
+Ny = 101                    # number of grid points in y-direction
 Nt = 200                    # number of time steps
 
 t_final = 200               # final time (in multiples of t_r)
