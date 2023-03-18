@@ -70,7 +70,6 @@ def h_steady(m,alpha):
      f0 = c0/B_
      f = 1/(1e-5*eps+f0)
      h_e_ft = -delta*f*m_ft
-     #h_e_ft = -delta*B_*m_ft/c0
      h_e_ft[k<10*k.min()] = 0
      return ifft2(np.nan_to_num(h_e_ft)).real
 
@@ -87,6 +86,5 @@ def s_steady(m,alpha):
      f0 = c0 / ((R_+2*np.pi*kx*1j*alpha))
      f = 1/(1e-5*eps+f0)
      s_e_ft = f*m_ft
-     #s_e_ft = (R_+2*np.pi*kx*1j*alpha)*m_ft/c0
      s_e_ft[k<10*k.min()] = 0
      return ifft2(np.nan_to_num(s_e_ft)).real
