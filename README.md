@@ -3,7 +3,7 @@ small-perturbation model for sub-ice-shelf channels and keels
 
 # Running the code
 This repository contains a simple model for ice-shelves undergoing localized basal melting or freezing perturbations. A derivation and analysis of the model is provided in the first two notebooks in the "notebooks" directory. The figures in the manuscript can be reproduced with the Jupyter notebooks in the "notebooks" directory. The final notebook "3_nonlinear.ipynb" relies on FEniCSx (https://fenicsproject.org) code in the "nonlinear-model" directory. This notebook can be run via Docker (https://www.docker.com) with the command:
-'docker run --init -ti -p 8888:8888 -v $(pwd):/home/fenics/shared -w /home/fenics/shared dolfinx/lab:stable'
+`docker run --init -ti -p 8888:8888 -v $(pwd):/home/fenics/shared -w /home/fenics/shared dolfinx/lab:stable`
 
 # Code organization
 ## Linear model
