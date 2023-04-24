@@ -9,11 +9,6 @@ from scipy.signal import fftconvolve
 def conv(a,b):
     return dt*fftconvolve(a,b,mode='full',axes=0)[0:Nt,:,:]
 
-#-----------------------------indicator function--------------------------------
-# used to trunctate the integral kernels at a small k=k_min
-def ind(k,k_min):
-    return 0.5*(np.sign(k-k_min)+1)
-
 #------------------------Functions relevant to kernels--------------------------
 def R(k):
     # relaxation function for floating ice
@@ -54,21 +49,27 @@ def Lamda_m(k,kx,alpha):
 def Uh(k,z):
     # horizontal velocity reponse function that multiplies the upper surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
+    # n = 2*np.pi*k
+    # R = z*(2*n*(np.exp(2*n) +np.exp(2*n*z)))-(1-z)*(np.exp(2*n*(z+1)) +np.exp(2*n)-np.exp(2*n*z)-1)
+    # D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
+    # f0 = D/(np.exp(n)*R)
+    # f = 1/(1e-5*eps+f0)
     n = 2*np.pi*k
-    R = z*(2*n*(np.exp(2*n) +np.exp(2*n*z)))-(1-z)*(np.exp(2*n*(z+1)) +np.exp(2*n)-np.exp(2*n*z)-1)
-    D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
-    f0 = D/(np.exp(n)*R)
-    f = 1/(1e-5*eps+f0)
+    f0 = -1/((2*n*z*np.exp(2*n*z) - z*np.exp(2*n*z) + z*np.exp(2*n*(z + 1)) - z + (2*n*z + z - 1)*np.exp(2*n) + np.exp(2*n*z) - np.exp(2*n*(z + 1)) + 1)*np.exp(n*(1 - z))/(n*((4*n**2 + 2)*np.exp(2*n) - np.exp(4*n) - 1)))
+    f = 1/(eps+f0)
     return f
 
 def Us(k,z):
     # horizontal velocity reponse function that multiplies the lower surface
     # elevation, where z (z=0 is base, z=1 is surface) is the depth
+    # n = 2*np.pi*k
+    # R = z*(np.exp(4*n)+np.exp(2*n*(z+1)) -np.exp(2*n)-np.exp(2*n*z))-(1-z)*2*n*np.exp(2*n)*(np.exp(2*n*z)+1)
+    # D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
+    # f0 = D/R
+    # f = 1/(1e-5*eps+f0)
     n = 2*np.pi*k
-    R = z*(np.exp(4*n)+np.exp(2*n*(z+1)) -np.exp(2*n)-np.exp(2*n*z))-(1-z)*2*n*np.exp(2*n)*(np.exp(2*n*z)+1)
-    D = np.exp(n*z)*(np.exp(4*n)-2*(1+2*n**2)*np.exp(2*n) +1)/n
-    f0 = D/R
-    f = 1/(1e-5*eps+f0)
+    f0 = 1/((-2*n*z*np.exp(2*n*(z + 1)) + 2*n*np.exp(2*n*(z + 1)) - z*np.exp(4*n) + z*np.exp(2*n*z) - z*np.exp(2*n*(z + 1)) + (-2*n*z + 2*n + z)*np.exp(2*n))*np.exp(-n*z)/(n*((4*n**2 + 2)*np.exp(2*n) - np.exp(4*n) - 1)))
+    f = 1/(eps+f0)
     return f
 
 

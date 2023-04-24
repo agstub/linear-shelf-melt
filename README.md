@@ -1,9 +1,13 @@
 # linear-shelf-melt
 small-perturbation model for sub-ice-shelf channels and keels
 
-This repository contains a simple model for ice-shelves undergoing localized basal melting or freezing perturbations. A derivation and analysis of the model is provided in the "notes" directory. The figures in the notes can be reproduced with the Jupyter notebooks in the "notebooks" directory.
+# Running the code
+This repository contains a simple model for ice-shelves undergoing localized basal melting or freezing perturbations. A derivation and analysis of the model is provided in the first two notebooks in the "notebooks" directory. The figures in the manuscript can be reproduced with the Jupyter notebooks in the "notebooks" directory. The final notebook "3_nonlinear.ipynb" relies on FEniCSx (https://fenicsproject.org) code in the "nonlinear-model" directory. This notebook can be run via Docker (https://www.docker.com) with the command:
+'docker run --init -ti -p 8888:8888 -v $(pwd):/home/fenics/shared -w /home/fenics/shared dolfinx/lab:stable'
 
-The "code" directory contains:
+# Code organization
+## Linear model
+The "linear-model" directory contains:
 1. **params.py**: sets the physical and numerical parameters
 2. **kernel_fcns.py**: defines the functions that appear in the solution operators
 3. **operators.py**: defines steady-state and time-dependent solution operators
@@ -12,3 +16,23 @@ The "code" directory contains:
 The code dependencies are listed in requirements.txt.
 
 Examples for running the code are provided in the Jupyter notebooks ("notebooks" directory).
+
+## Nonlinear model
+The "nonlinear-model" directory is essentially a fork of the repo https://github.com/agstub/grounding-line-methods that has been translated into Dolfinx.
+The model is organized in 7 python files in the source directory as follows.
+The model is organized in 7 python files in the *source* directory as follows.
+
+1. **params.py** contains all of the model parameters and model options.
+
+3. **stokes.py** contains the Stokes system solver and related functions.
+
+4. **mesh_routine.py** contains functions that solve the surface kinematic equations, move the mesh,
+    and some post-processing functions.
+
+5. **bdry_conds.py** contains functions that mark the mesh boundary and apply boundary conditions.
+
+6. **smb.py** contains surface mass balance functions: basal melting/freezing rate
+and surface accumulation/ablation rate.
+
+7. **main.py** runs the model. It contains the time-stepping loop that
+calls the Stokes solver and mesh-related functions at each timestep, and saves the output.
