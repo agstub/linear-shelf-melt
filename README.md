@@ -1,5 +1,6 @@
 # linear-shelf-melt
-small-perturbation model for sub-ice-shelf channels and keels
+Small-perturbation (linearized) model for topographic response of ice shelves to localized melting. Also includes finite element code to solve
+the fully nonlinear problem.
 
 # Running the code
 This repository contains a simple model for ice-shelves undergoing localized basal melting or freezing perturbations. 
