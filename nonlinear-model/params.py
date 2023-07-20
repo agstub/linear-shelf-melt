@@ -10,7 +10,7 @@ B = (2**((n-1.0)/(2*n)))*B0        # "2*Viscosity" constant in weak form (Pa s^{
 rm2 = 1 + 1.0/n - 2.0              # Exponent in weak form: r-2
 
 rho_i = 917.0                      # Density of ice
-rho_w = 1000.0                     # Density of water
+rho_w = 1020.0                     # Density of water
 g = 9.81                           # Gravitational acceleration
 eta0 = 1e14                        # viscosity at zero deviatoric stress 
 

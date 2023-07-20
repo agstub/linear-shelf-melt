@@ -6,14 +6,14 @@
 
 import numpy as np
 from bdry_conds import TopBoundary, WaterBoundary
-from dolfinx.mesh import locate_entities_boundary
 from dolfinx.fem import (Constant, Expression, Function, FunctionSpace,
                          dirichletbc, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
+from dolfinx.mesh import locate_entities_boundary
 from params import dt
 from petsc4py.PETSc import ScalarType
-from ufl import (Dx, SpatialCoordinate, TestFunction, TrialFunction, dx, grad,
-                 inner)
+from ufl import (Dx, FacetNormal, SpatialCoordinate, TestFunction,
+                 TrialFunction, ds, dx, grad, inner)
 
 
 # ------------------------------------------------------------------------------------
@@ -26,18 +26,27 @@ def move_mesh(w,domain,t,smb_h,smb_s):
     V = FunctionSpace(domain, ("CG", 1))
     x = SpatialCoordinate(domain)
 
+    # solve for slope at surfaces (first component of normal vector)
+    # and interpolate onto enitire domain
+    n0 = FacetNormal(domain)[0]
+    nu = n0
+    u_ = TrialFunction(V)
+    v_ = TestFunction(V)
+    a = inner(u_,v_)*dx+inner(u_,v_)*ds
+    l = inner(nu, v_)*ds
+    prob0 = LinearProblem(a,l, bcs=[])
+    n0 = prob0.solve()
+    
+
     # displacement at upper and lower boundaries
-    disp_h = dt*(w.sub(0).sub(1) - w.sub(0).sub(0)*Dx(x[1],0)+smb_h(x[0],t))
-    disp_s = dt*(w.sub(0).sub(1) - w.sub(0).sub(0)*Dx(x[1],0)+smb_s(x[0],t))
+    disp_h = dt*(w.sub(0).sub(1) + w.sub(0).sub(0)*n0 + smb_h(x[0],t))
+    disp_s = dt*(w.sub(0).sub(1) - w.sub(0).sub(0)*n0 + smb_s(x[0],t))
 
     disp_h_fcn = Function(V)
     disp_s_fcn = Function(V)
     
     disp_h_fcn.interpolate(Expression(disp_h, V.element.interpolation_points()))
     disp_s_fcn.interpolate(Expression(disp_s, V.element.interpolation_points()))
-
-    # dofs_1 = locate_dofs_geometrical(V, WaterBoundary)
-    # dofs_2 = locate_dofs_geometrical(V, TopBoundary)
 
     facets_1 = locate_entities_boundary(domain, domain.topology.dim-1, WaterBoundary)        
     facets_2 = locate_entities_boundary(domain, domain.topology.dim-1, TopBoundary)

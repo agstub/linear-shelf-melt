@@ -4,31 +4,33 @@
 #-------------------------------------------------------------------------------
 import numpy as np
 from kernel_fcns import B, R, Uh, Us, Wh, Ws, conv, ker_h, ker_s
-from params import delta, eps, k, kx, L, t
+from params import delta, eps, k, kx, t
 from scipy.fft import fft2, ifft2
 
 
 #---------------------Ice-surface elevation solution operators------------------
-def compute_h(m,alpha):
+def compute_h(m,alpha,gamma=0):
     # solution operator tha returns the upper-surface elevation h given the advection
     # parameter alpha (a scalar) and the melt-rate field (m)
     #
     # note: this is the time-dependent version
     m_ft = fft2(m)
-    h_ft = conv(ker_h(t,k,kx,alpha),m_ft)
+    h_ft = conv(ker_h(t,k,kx,alpha,gamma),m_ft)
     h_ft[k<10*k.min()] = 0
-    return ifft2(h_ft).real
+    h = ifft2(h_ft).real
+    return h - (0*h.T + h[:,0,0]).T
 
 
-def compute_s(m,alpha):
+def compute_s(m,alpha,gamma=0):
     # solution operator tha returns the lower-surface elevation s given the advection
     # parameter alpha (a scalar) and the melt-rate field (m)
     #
     # note: this is the time-dependent version
     m_ft = fft2(m)
-    s_ft = conv(ker_s(t,k,kx,alpha),m_ft)
+    s_ft = conv(ker_s(t,k,kx,alpha,gamma),m_ft)
     s_ft[k<10*k.min()] = 0
-    return ifft2(s_ft).real
+    s = ifft2(s_ft).real
+    return s - (0*s.T + s[:,0,0]).T
 
 def compute_u(h,s,z):
     # function for computing the horizontal velocity in the x direction (u)

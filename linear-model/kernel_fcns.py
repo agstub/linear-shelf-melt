@@ -2,8 +2,9 @@
 # the elevation and velocity solutions
 
 import numpy as np
-from params import Nt,eps,delta,dt
+from params import Nt, delta, dt, eps
 from scipy.signal import fftconvolve
+
 
 #---------------------------convolution operator--------------------------------
 def conv(a,b):
@@ -19,6 +20,15 @@ def R(k):
     f = 1/(eps+f0)
     return f
 
+def Re(k):
+    # relaxation function for floating ice
+    n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
+    R1 = 4*(n**3)*np.exp(2*n)
+    f0 = D/R1
+    f = 1/(eps+f0)
+    return f
+
 def B(k):
     # buoyancy transfer function for floating ice
     n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
@@ -28,22 +38,31 @@ def B(k):
     f =1/(eps+f0)
     return f
 
-def Lamda_p(k,kx,alpha):
+def Be(k):
+    # buoyancy transfer function for floating ice
+    n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
+    D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
+    B1 = 2*(n**2)*np.exp(n)*(np.exp(2*n)-1)
+    f0 = D/B1
+    f =1/(eps+f0)
+    return f
+
+def Lamda_p(k,kx,alpha,gamma=0):
     # expression for the larger eigenvalue in the problem
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = -0.5*(delta+1)*R_+0.5*mu-1j*(2*np.pi*kx)*alpha
+    Lp = -0.5*(delta+1)*R_+0.5*mu-1j*(2*np.pi*kx)*alpha  + gamma
     return Lp
 
-def Lamda_m(k,kx,alpha):
+def Lamda_m(k,kx,alpha,gamma=0):
     # expression for the smaller eigenvalue in the problem
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lm = -1j*(2*np.pi*kx)*alpha-0.5*(delta+1)*R_-0.5*mu
+    Lm = -1j*(2*np.pi*kx)*alpha-0.5*(delta+1)*R_-0.5*mu + gamma
     return Lm
 
 def Uh(k,z):
@@ -94,30 +113,30 @@ def Ws(k,z):
     return f
 
 #------------------------------ Kernels-----------------------------------------
-def ker_h(t,k,kx,alpha):
+def ker_h(t,k,kx,alpha,gamma=0):
     # kernel for computing the upper surface elevation when the melt-rate forcing
     # is time-dependent
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = Lamda_p(k,kx,alpha)
-    Lm = Lamda_m(k,kx,alpha)
+    Lp = Lamda_p(k,kx,alpha,gamma)
+    Lm = Lamda_m(k,kx,alpha,gamma)
 
     ker0 = (delta*B_/mu)*np.exp(Lp*t)
     ker1 = (delta*B_/mu)*np.exp(Lm*t)
     K = ker1-ker0
     return K
 
-def ker_s(t,k,kx,alpha):
+def ker_s(t,k,kx,alpha,gamma=0):
     # kernel for computing the lower surface elevation when the melt-rate forcing
     # is time-dependent
     R_ = R(k)
     B_ = B(k)
     chi = (1-delta)*R_
     mu = np.sqrt(4*delta*(B_)**2 + chi**2)
-    Lp = Lamda_p(k,kx,alpha)
-    Lm = Lamda_m(k,kx,alpha)
+    Lp = Lamda_p(k,kx,alpha,gamma)
+    Lm = Lamda_m(k,kx,alpha,gamma)
 
     ker0 = (1/(2*mu))*(mu-chi)*np.exp(Lm*t)
     ker1 = (1/(2*mu))*(mu+chi)*np.exp(Lp*t)

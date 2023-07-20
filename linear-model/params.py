@@ -9,7 +9,7 @@ from scipy.fft import fftfreq
 H = 500                     # ice thickness (m)
 eta = 1e14                  # Newtonian ice viscosity (Pa s)
 rho_i = 917                 # ice density (kg/m^3)
-rho_w = 1000                # water density (kg/m^3)
+rho_w = 1020                # water density (kg/m^3)
 g = 9.81                    # gravitational acceleration
 delta = rho_w/rho_i-1       # flotation factor
 t_r = 2*eta/(rho_i*g*H)     # viscous relaxation time
@@ -25,19 +25,22 @@ eps = 2.529e-14             # regularization corresponding to the relaxation("R"
                             # tend to be bad at small k because the R and B functions
                             # blow as k-->0.
 
+# intrinsic channel evolution timescale
+t_e = (4*eta/((rho_w-rho_i)*g*H))*(rho_w/rho_i)
+
 #---------------------- numerical parameters------------------------------------
 # discretization parameters
 Nx = 201                    # number of grid points in x-direction
 Ny = 201                    # number of grid points in y-direction
-Nt = 200                    # number of time steps
+Nt = 500                    # number of time steps
 
-t_final = 200               # final time (in multiples of t_r)
+t_final = 40*t_e/t_r        # final time (in multiples of t_r)
 
 t0 = np.linspace(0,t_final,num=Nt) # time array
 
 dt = t0[1]
 
-L =  35                        # horizontal x-y domain is a square of length 2L 
+L =  40                        # horizontal x-y domain is a square of length 2L 
 x0 = np.linspace(-L,L,num=Nx)  # x coordinate array
 y0 = np.linspace(-L,L,num=Ny)  # y coordinate array
 dx = np.abs(x0[1]-x0[0])       # grid size in x direction'
@@ -60,5 +63,3 @@ t,kx,ky = np.meshgrid(t0,kx0,ky0,indexing='ij')
 
 # magnitude of the wavevector
 k = np.sqrt(kx**2+ky**2)
-
-# print(2.5e-2/(dx*dy))
