@@ -2,7 +2,7 @@
 Small-perturbation (linearized) model for topographic response of ice shelves to localized melting. Also includes finite element code to solve
 the fully nonlinear problem. This code accompanies the manuscript:
 
-`Stubblefield, A.G., Wearing, M.G., & Meyer, C.R. (2023). Linear analysis of ice-shelf topography response to basal melting and freezing. https://eartharxiv.org/repository/view/5330/ `
+> Stubblefield, A.G., Wearing, M.G., & Meyer, C.R. (2023). Linear analysis of ice-shelf topography response to basal melting and freezing. https://eartharxiv.org/repository/view/5330/ 
 
 # Running the code
 This repository contains a simple model for ice-shelves undergoing localized basal melting or freezing perturbations. 
