@@ -21,7 +21,7 @@ def R(k):
     return f
 
 def Re(k):
-    # relaxation function for floating ice
+    # extensional contribution to relaxation function 
     n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
     D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     R1 = 4*(n**3)*np.exp(2*n)
@@ -39,7 +39,7 @@ def B(k):
     return f
 
 def Be(k):
-    # buoyancy transfer function for floating ice
+    #  extensional contribution to buoyancy transfer function 
     n = 2*np.pi*k           # used to convert to SciPy's Fourier Transform definition
     D = n*(np.exp(4*n) -2*(1+2*n**2)*np.exp(2*n) + 1)
     B1 = 2*(n**2)*np.exp(n)*(np.exp(2*n)-1)
