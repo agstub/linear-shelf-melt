@@ -1,4 +1,6 @@
 # linear-shelf-melt
+[![DOI](https://zenodo.org/badge/455572763.svg)](https://zenodo.org/badge/latestdoi/455572763)
+
 Small-perturbation (linearized) model for topographic response of ice shelves to localized melting. Also includes finite element code to solve
 the fully nonlinear problem. This code accompanies the manuscript:
 
